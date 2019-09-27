@@ -1,0 +1,94 @@
+<html>
+<style>
+
+</style>
+
+<h1> choose the book you want to get details </h1>
+<div id="demo"> 
+<select id="mydiv">
+<option value="" disabled selected>select a book </option><br>
+</select>
+<p id="author"></p>
+
+<ul id="list">
+</ul>
+
+<p id="subtitle"></p>
+<p id="publisher"></p>
+<p id="link"></p>
+<button type="submit" id="b1" onclick="display()"> submit here</button>
+
+<img id="myImg"  width="250" height="300"><br><br>
+<div class="image" >
+
+</div >
+</div>
+</body>
+<script>
+    function myfunction()
+    {       
+   var xhttp=new XMLHttpRequest();
+   xhttp.open('GET',"https://www.googleapis.com/books/v1/volumes?q={search terms}");
+   xhttp.send();
+   
+    xhttp.onload= function(){
+    if(this.status==200)
+    {
+              var response=JSON.parse(this.responseText);        
+
+       for(var i=0; i<response.items.length; i++)
+       {          
+              var data= response.items[i].volumeInfo.title;
+              console.log(response.items.length);
+          
+              if(count!=0)
+              {
+                    var select1=document.getElementById("mydiv");
+                    var strUsr=select1.options[select1.selectedIndex].value;
+
+                    if(strUsr==data) // if the user selected title == the title in the items array [particular index]
+                            {
+                        for(var j=0; j<response.items[i].volumeInfo.authors.length; j++)
+                        {
+                           
+                        var authors=response.items[i].volumeInfo.authors[j];
+                        document.getElementById("author").innerHTML= "the author"+ j +" of book " + "<b>" +strUsr + "</b>" + " are "+authors+ "<br>"; 
+                       // document.getElementById("list").appendChild(authors);
+
+                        }
+                        var subtitle=response.items[i].volumeInfo.subtitle;
+                        var publisher=response.items[i].volumeInfo.publisher;
+                        var previewLink=response.items[i].volumeInfo.previewLink;
+                        var imageLink=response.items[i].volumeInfo.imageLinks.smallThumbnail;
+                        var x = document.getElementById("myImg");
+                        console.log(x, imageLink);
+                        x.src = imageLink;
+                      
+                        document.getElementById("subtitle").innerHTML= "the subtitle of book  is   " + "<b>" +subtitle + "<b>";
+                        document.getElementById("publisher").innerHTML= "the publisher of book " +  " is "+ "<b>" +publisher+ "<b>";
+                        document.getElementById("link").innerHTML= "you can preview the book  " + " at " + "<a href=" +previewLink+">" +previewLink+"</a>";
+                    
+                    }                                  
+               }
+               else
+               {
+                   //alert("hello");
+                    var select=document.getElementById("mydiv");
+                    var option=document.createElement("option");
+                    option.appendChild(document.createTextNode(data));
+                    option.value=data;
+                    select.appendChild(option);
+          }
+        }
+    }
+};
+}
+var count=0;
+function display()
+{
+    count++;
+    myfunction();
+}
+myfunction();
+</script>
+</html>
